@@ -404,6 +404,11 @@
                                             type="button" @click="buyNumber++" class="layui-btn layui-btn-primary">
                                         +
                                     </button>
+                                    <button @click="speakCaipin()" style="height:auto;"
+                                            :style='{"padding":"0 10px","boxShadow":"0 0 0px rgba(255,0,0,.3)","margin":"0 5px","borderColor":"rgba(0,0,0,.3)","backgroundColor":"rgba(76, 175, 80, 1)","color":"rgba(255, 255, 255, 1)","borderRadius":"6px","borderWidth":"0","width":"auto","lineHeight":"40px","fontSize":"16px","borderStyle":"solid"}'
+                                            type="button" class="layui-btn">
+                                        🔊 语音播报
+                                    </button>
                                     <button @click="addCaipinOrder()" style="height:auto;"
                                             :style='{"padding":"0 10px","boxShadow":"0 0 0px rgba(255,0,0,.3)","margin":"0 5px","borderColor":"rgba(0,0,0,.3)","backgroundColor":"rgba(23, 124, 176, 1)","color":"rgba(255, 255, 255, 1)","borderRadius":"6px","borderWidth":"0","width":"auto","lineHeight":"40px","fontSize":"16px","borderStyle":"solid"}'
                                             type="button" class="layui-btn btn-submit">
@@ -587,6 +592,22 @@
                         });
                     });
                 });
+            },
+            // 语音播报菜品名称和价格
+            speakCaipin() {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    let text = this.detail.caipinName;
+                    if (this.detail.caipinNewMoney) {
+                        text += '，价格' + this.detail.caipinNewMoney + '元';
+                    }
+                    let utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'zh-CN';
+                    utterance.rate = 0.9;
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    layui.layer.msg('当前浏览器不支持语音播报');
+                }
             },
             // 立即购买
             addCaipinOrder() {

@@ -220,6 +220,30 @@
                            autocomplete="off">
                 </div>
             </div>
+            <div class="layui-form-item main_borderColor"
+                 :style='{"padding":"10px","boxShadow":"0 0 0px rgba(255,0,0,.8)","margin":"0 0 10px 0","backgroundColor":"rgba(255, 255, 255, 0)","borderRadius":"1px","borderWidth":"0 0 1px 0","borderStyle":"solid"}'>
+                <label :style='{"width":"110px","borderColor": "rgba(255, 255, 255, 0)","padding":"0 12px 0 0","backgroundColor":"rgba(255, 255, 255, 0)","fontSize":"15px","color":"#333","textAlign":"left"}'
+                       class="layui-form-label">
+                    取餐方式：
+                </label>
+                <div class="layui-input-block">
+                    <input type="radio" name="qucanType" value="线下取餐" title="线下取餐" checked>
+                    <input type="radio" name="qucanType" value="线上配送" title="线上配送">
+                </div>
+            </div>
+            <div class="layui-form-item main_borderColor" v-show="qucanType=='线上配送'"
+                 :style='{"padding":"10px","boxShadow":"0 0 0px rgba(255,0,0,.8)","margin":"0 0 10px 0","backgroundColor":"rgba(255, 255, 255, 0)","borderRadius":"1px","borderWidth":"0 0 1px 0","borderStyle":"solid"}'>
+                <label :style='{"width":"110px","borderColor": "rgba(255, 255, 255, 0)","padding":"0 12px 0 0","backgroundColor":"rgba(255, 255, 255, 0)","fontSize":"15px","color":"#333","textAlign":"left"}'
+                       class="layui-form-label">
+                    配送地址：
+                </label>
+                <div class="layui-input-block">
+                    <input class="layui-input main_borderColor"
+                           :style='{"padding":"0 12px","boxShadow":"0 0 0px rgba(160, 67, 26, 1)","backgroundColor":"#fff","color":"rgba(135, 206, 250, 1)","borderRadius":"4px","textAlign":"left","borderWidth":"1px","fontSize":"15px","borderStyle":"solid","height":"40px"}'
+                           v-model="detail.address" type="text" name="address" id="address"
+                           placeholder="请输入配送地址" autocomplete="off">
+                </div>
+            </div>
             <div class="btn-container">
                     <span style="font-size: 18px;font-weight: bold;color: #ce0b07;margin-right: 20px;">
                         总价：{{(caipin.caipinNewMoney * detail.buyNumber).toFixed(2) }}RMB
@@ -247,15 +271,7 @@
 <script src="../../js/utils.js"></script>
 <!-- 校验格式工具类 -->
 <script src="../../js/validate.js"></script>
-<!-- 地图 -->
-<script type="text/javascript" src="../../js/jquery.js"></script>
-<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=ca04cee7ac952691aa67a131e6f0cee0"></script>
-<script type="text/javascript" src="../../js/bootstrap.min.js"></script>
-<script type="text/javascript" src="../../js/bootstrap.AMapPositionPicker.js"></script>
-
 <script>
-    var jquery = $;
-
     var vue = new Vue({
         el: '#app',
         data: {
@@ -289,9 +305,12 @@
                 caipinOrderPaymentValue: '',//数字对应的值
                 insertTime: '',
                 createTime: '',
+                address: '',
             },
             // 级联表的
             caipin: {},
+            // 取餐方式
+            qucanType: '线下取餐',
 
             // 下拉框
             caipinOrderTypesList: [],
@@ -353,6 +372,13 @@
             }
         });
 
+
+        // 监听取餐方式切换
+        form.on('radio()', function(data){
+            if(data.name === 'qucanType'){
+                vue.qucanType = data.value;
+            }
+        });
 
         // 级联表数据查询
         initializationcaipin(localStorage.getItem("caipinId"));
@@ -422,6 +448,7 @@
     // 日期框初始化
     function dateTimePick() {
         var myDate = new Date();  //获取当前时间
+        var minDateTime = formatDateTime(myDate);
         /*
             ,change: function(value, date, endDate){
                 value       得到日期生成的值，如：2017-08-18
@@ -432,11 +459,30 @@
         var caipinOrderTime = layui.laydate.render({
             elem: '#caipinOrderTime'
             , type: 'datetime'
-            , min: myDate.toLocaleString()
+            , min: minDateTime
             , change: function (value, date, endDate) {
                 vue.detail.caipinOrderTime = value;
             }
+            , done: function (value, date, endDate) {
+                vue.detail.caipinOrderTime = value;
+            }
         });
+    }
+
+    function formatDateTime(date) {
+        return [
+            date.getFullYear(),
+            leftPad(date.getMonth() + 1),
+            leftPad(date.getDate())
+        ].join('-') + ' ' + [
+            leftPad(date.getHours()),
+            leftPad(date.getMinutes()),
+            leftPad(date.getSeconds())
+        ].join(':');
+    }
+
+    function leftPad(value) {
+        return value < 10 ? '0' + value : '' + value;
     }
 
 
