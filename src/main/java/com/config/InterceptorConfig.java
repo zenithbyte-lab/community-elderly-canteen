@@ -2,6 +2,7 @@ package com.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -33,7 +34,8 @@ public class InterceptorConfig extends WebMvcConfigurationSupport{
         .addResourceLocations("classpath:/admin/")
         .addResourceLocations("classpath:/img/")
         .addResourceLocations("classpath:/front/")
-        .addResourceLocations("classpath:/public/");
+        .addResourceLocations("classpath:/public/")
+        .setCacheControl(CacheControl.noStore());
 		super.addResourceHandlers(registry);
     }
 }

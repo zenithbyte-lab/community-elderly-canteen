@@ -4,11 +4,30 @@
  */
 function jump(url) {
 	if (!url || url == 'null' || url == null) {
-		window.location.href = './index.html';
+		window.location.href = buildPageUrl('./index.html');
+		return;
 	}
 	// 路径访问设置
 	localStorage.setItem('iframeUrl', url.replace('../', './pages/'));
-	window.location.href = url;
+	window.location.href = buildPageUrl(url);
+}
+
+function buildPageUrl(url) {
+	if (!url) {
+		return url;
+	}
+
+	var hashIndex = url.indexOf('#');
+	var hash = '';
+	var path = url;
+
+	if (hashIndex !== -1) {
+		hash = url.substring(hashIndex);
+		path = url.substring(0, hashIndex);
+	}
+
+	var separator = path.indexOf('?') === -1 ? '?' : '&';
+	return path + separator + '_t=' + new Date().getTime() + hash;
 }
 
 /**
